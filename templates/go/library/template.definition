@@ -1,0 +1,9 @@
+version: 0.0.1
+description: A template for Go libraries
+parameters:
+- name: RepoName
+  prompt: "Repository name"
+  required: true
+- name: OrgName
+  prompt: "Organization or user name"
+  required: true
