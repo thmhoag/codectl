@@ -1,0 +1,9 @@
+version: 0.0.1
+description: a template for go cli tools
+parameters:
+- name: ProjectName
+  prompt: "Project name"
+  required: true
+- name: ModuleName
+  prompt: "The Go module name/path"
+  required: true
