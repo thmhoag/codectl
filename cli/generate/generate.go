@@ -44,6 +44,11 @@ func NewGenerateCmd(ctx Ctx) *cobra.Command {
 
 			parameterValues := make(map[string]interface{})
 			templateProps := templates[templateName]
+			if templateProps == nil {
+				fmt.Println("Invalid template name:", templateName)
+				return
+			}
+
 			if templateProps.Parameters != nil && len(templateProps.Parameters) > 0 {
 
 				for _, p := range templateProps.Parameters {
