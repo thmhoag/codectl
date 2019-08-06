@@ -88,7 +88,7 @@ func promptForParameter(parm *template.Parameter) (string, error) {
 		Label: parm,
 		Templates: templates,
 		Default: parm.Value,
-		AllowEdit: true,
+		AllowEdit: false,
 		Validate: func(s string) error {
 			if !parm.Required {
 				return nil
