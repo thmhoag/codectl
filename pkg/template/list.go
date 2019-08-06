@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	DefinitionExtension = ".definition"
+	DefinitionFileName = ".definition.yaml"
 )
 
 // GetAll returns a map of template path to their definitions
@@ -51,7 +51,7 @@ func GetAll(box *packr.Box, dir string) (map[string]*Properties, error) {
 
 func isInTemplateRoot(file os.FileInfo) bool {
 
-	return filepath.Ext(file.Name()) == DefinitionExtension
+	return strings.ToLower(filepath.Base(file.Name())) == strings.ToLower(DefinitionFileName)
 }
 
 func unmarshalProperties(file packd.File) (*Properties, error) {

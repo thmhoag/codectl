@@ -104,7 +104,7 @@ func (g *generator) Generate(parmsObject interface{}) error {
 			return err
 		}
 
-		if strings.ToLower(filepath.Ext(i.Name())) == strings.ToLower(".definition") {
+		if strings.ToLower(filepath.Base(i.Name())) == strings.ToLower(tmpl.DefinitionFileName) {
 			// this is the definition file, don't copy it
 			return nil
 		}
