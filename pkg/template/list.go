@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	DefinitionFileName = ".definition.yaml"
+	DefinitionFileName = ".codectl.yaml"
 )
 
 // GetAll returns a map of template path to their definitions
