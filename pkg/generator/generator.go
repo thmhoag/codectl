@@ -4,16 +4,17 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"github.com/Masterminds/sprig"
-	"github.com/gobuffalo/packd"
-	"github.com/gobuffalo/packr/v2"
-	tmpl "github.com/thmhoag/codectl/pkg/template"
-	"gopkg.in/yaml.v2"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
+
+	"github.com/Masterminds/sprig"
+	"github.com/gobuffalo/packd"
+	"github.com/gobuffalo/packr/v2"
+	tmpl "github.com/thmhoag/codectl/pkg/template"
+	"gopkg.in/yaml.v2"
 )
 
 type Generator interface {
@@ -233,7 +234,7 @@ func fileExists(name string) bool {
 	return true
 }
 
-func fileCopy(src, dst string) (error) {
+func fileCopy(src, dst string) error {
 
 	if src == dst {
 		return nil

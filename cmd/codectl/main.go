@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/thmhoag/codectl/cli"
 	"os"
+
+	"github.com/thmhoag/codectl/cli"
 )
 
 var (
