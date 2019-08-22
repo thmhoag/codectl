@@ -2,7 +2,7 @@ package repo
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/thmhoag/codectl/pkg/clif"
+	"github.com/thmhoag/clif"
 )
 
 type listOpts struct {
@@ -25,7 +25,7 @@ func newListCmd(ctx Ctx) *cobra.Command {
 			if err := clif.New(opts.formatString).
 				Output(cmd.OutOrStdout()).
 				Write(repos); err != nil {
-				log.Fatal(err)
+					log.Fatal(err)
 			}
 		},
 	}

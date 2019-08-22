@@ -2,7 +2,7 @@ package template
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/thmhoag/codectl/pkg/clif"
+	"github.com/thmhoag/clif"
 )
 
 type listOpts struct {
