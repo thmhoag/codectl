@@ -32,7 +32,7 @@ func NewGenerateCmd(ctx Ctx) *cobra.Command {
 			templateName := args[0]
 			templatePath := strings.ReplaceAll(templateName, ".", "/")
 
-			gen.OverridesPath(opts.valuesFilePath).
+			gen.OverridesPath(opts.overridesDirFlag).
 				DestinationPath(opts.outputDirFlag).
 				PathPrefix(templatePath).
 				CleanDestination(opts.cleanFlag)
@@ -42,14 +42,23 @@ func NewGenerateCmd(ctx Ctx) *cobra.Command {
 				log.Fatal(err)
 			}
 
-			parameterValues := make(map[string]interface{})
 			templateProps := templates[templateName]
 			if templateProps == nil {
 				fmt.Println("Invalid template name:", templateName)
 				return
 			}
 
-			if templateProps.Parameters != nil && len(templateProps.Parameters) > 0 {
+			parameterValues := make(map[string]interface{})
+			if opts.valuesFilePath != "" {
+				parameterValues, err = template.LoadValuesFromFile(opts.valuesFilePath)
+				if err != nil {
+					log.WithError(err).Fatalf("unable to process values file at %s", opts.valuesFilePath)
+				}
+			}
+
+			templateHasParms := templateProps.Parameters != nil && len(templateProps.Parameters) > 0
+			parmsAlreadyProvided := parameterValues != nil && len(parameterValues) > 0
+			if templateHasParms && !parmsAlreadyProvided {
 
 				for _, p := range templateProps.Parameters {
 					parm := p
@@ -61,7 +70,7 @@ func NewGenerateCmd(ctx Ctx) *cobra.Command {
 			}
 
 			if err := gen.Generate(parameterValues); err != nil {
-				log.Fatal(err)
+				log.WithError(err).Fatal("error processing template")
 			}
 		},
 	}

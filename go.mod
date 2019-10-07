@@ -3,12 +3,14 @@ module github.com/thmhoag/codectl
 go 1.12
 
 require (
+	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.18.0+incompatible
 	github.com/antonfisher/nested-logrus-formatter v1.0.2
 	github.com/blang/semver v3.5.1+incompatible
 	github.com/gobuffalo/packd v0.3.0
 	github.com/gobuffalo/packr/v2 v2.5.2
 	github.com/hashicorp/go-getter v1.3.0
+	github.com/imdario/mergo v0.3.8 // indirect
 	github.com/manifoldco/promptui v0.3.2
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pkg/errors v0.8.1
