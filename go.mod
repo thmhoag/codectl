@@ -3,6 +3,7 @@ module github.com/thmhoag/codectl
 go 1.12
 
 require (
+	github.com/AlecAivazis/survey/v2 v2.0.4
 	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/sprig v2.18.0+incompatible
 	github.com/antonfisher/nested-logrus-formatter v1.0.2
@@ -20,5 +21,6 @@ require (
 	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.4.0
 	github.com/thmhoag/clif v0.1.0
+	gopkg.in/alecthomas/kingpin.v3-unstable v3.0.0-20191105091915-95d230a53780 // indirect
 	gopkg.in/yaml.v2 v2.2.2
 )

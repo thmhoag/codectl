@@ -2,11 +2,10 @@ package generate
 
 import (
 	"fmt"
-	"github.com/manifoldco/promptui"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/thmhoag/codectl/pkg/template"
 	"strings"
+	"github.com/AlecAivazis/survey/v2"
 )
 
 type generateOpts struct {
@@ -64,6 +63,10 @@ func NewGenerateCmd(ctx Ctx) *cobra.Command {
 					parm := p
 					parameterValues[parm.Name], err = promptForParameter(&parm)
 					if err != nil {
+						 if err.Error() == "interrupt" {
+							 return
+						 }
+
 						log.Fatal(err)
 					}
 				}
@@ -85,31 +88,25 @@ func NewGenerateCmd(ctx Ctx) *cobra.Command {
 
 func promptForParameter(parm *template.Parameter) (string, error) {
 
-	bold := promptui.Styler(promptui.FGBold)
-	templates := &promptui.PromptTemplates{
-		Prompt:  fmt.Sprintf("%s {{ .Prompt | bold }}%s ", bold(promptui.IconInitial), bold(":")),
-		Valid:   fmt.Sprintf("%s {{ .Prompt | bold }}%s ", bold(promptui.IconGood), bold(":")),
-		Invalid: fmt.Sprintf("%s {{ .Prompt | bold }}%s ", bold(promptui.IconBad), bold(":")),
-		Success: "{{ printf \"%s:\" .Prompt | faint }} ",
-	}
-
-	prompt := promptui.Prompt{
-		Label: parm,
-		Templates: templates,
+	prompt := &survey.Input{
+		Renderer: survey.Renderer{},
+		Message:  fmt.Sprintf("%s:", parm.Prompt),
 		Default: parm.Value,
-		AllowEdit: false,
-		Validate: func(s string) error {
-			if !parm.Required {
-				return nil
-			}
-
-			if s == "" {
-				return errors.Errorf("parameter %s is required and was not provided", parm.Name)
-			}
-
-			return nil
-		},
 	}
 
-	return prompt.Run()
+	var response string
+	surveyOpts := []survey.AskOpt{
+		survey.WithIcons(func(icons *survey.IconSet){
+			icons.Question.Text = ""
+			icons.Question.Format = ""
+		}),
+	}
+
+	if parm.Required {
+		surveyOpts = append(surveyOpts, survey.WithValidator(survey.Required))
+	}
+
+	err := survey.AskOne(prompt, &response, surveyOpts...)
+
+	return response, err
 }
