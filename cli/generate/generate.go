@@ -34,7 +34,7 @@ func NewGenerateCmd(ctx Ctx) *cobra.Command {
 
 			// TODO: Find more elegant way to handle this dirty hack
 			if runtime.GOOS == "windows" {
-				templatePath = strings.ReplaceAll(templatePath, ".", `\`)
+				templatePath = strings.ReplaceAll(templateName, ".", `\`)
 			}
 
 			gen.OverridesPath(opts.overridesDirFlag).
