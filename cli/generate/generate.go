@@ -30,6 +30,7 @@ func NewGenerateCmd(ctx Ctx) *cobra.Command {
 
 			templateName := args[0]
 			templatePath := strings.ReplaceAll(templateName, ".", "/")
+			templatePath = strings.ReplaceAll(templateName, ".", `\`)
 
 			gen.OverridesPath(opts.overridesDirFlag).
 				DestinationPath(opts.outputDirFlag).

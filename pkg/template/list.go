@@ -40,6 +40,7 @@ func GetAll(box *packr.Box, dir string) (map[string]*Properties, error) {
 
 		if props.Name == "" {
 			props.Name = strings.ReplaceAll(filepath.Dir(fileInfo.Name()), "/", ".")
+			props.Name = strings.ReplaceAll(filepath.Dir(fileInfo.Name()), `\`, ".")
 		}
 
 		templates[props.Name] = props
