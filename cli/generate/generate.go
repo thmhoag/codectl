@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/thmhoag/codectl/pkg/template"
+	"runtime"
 	"strings"
 	"github.com/AlecAivazis/survey/v2"
 )
@@ -30,7 +31,11 @@ func NewGenerateCmd(ctx Ctx) *cobra.Command {
 
 			templateName := args[0]
 			templatePath := strings.ReplaceAll(templateName, ".", "/")
-			templatePath = strings.ReplaceAll(templateName, ".", `\`)
+
+			// TODO: Find more elegant way to handle this dirty hack
+			if runtime.GOOS == "windows" {
+				templatePath = strings.ReplaceAll(templatePath, ".", `\`)
+			}
 
 			gen.OverridesPath(opts.overridesDirFlag).
 				DestinationPath(opts.outputDirFlag).
@@ -99,7 +104,8 @@ func promptForParameter(parm *template.Parameter) (string, error) {
 	surveyOpts := []survey.AskOpt{
 		survey.WithIcons(func(icons *survey.IconSet){
 			icons.Question.Text = ""
-			icons.Question.Format = ""
+			icons.Question.Format = "default"
+			icons.Error.Format = "red+hb"
 		}),
 	}
 
