@@ -13,8 +13,9 @@ command -v git >/dev/null 2>&1 || { echo "git is required but not installed, abo
 
 BUILD_TIME="$(date +'%m/%d/%Y.%H:%M')"
 COMMIT_HASH="$(git rev-parse --short HEAD)"
+GOLANG_VERSION=$(go version | awk '{print $3;}')
 
 echo "Installing..."
-go install -ldflags="-s -w -X main.semver=v0.0.0-dev -X main.commit=$COMMIT_HASH -X main.built=$BUILD_TIME"
+go install -ldflags="-s -w -X main.semver=v0.0.0-dev -X main.commit=$COMMIT_HASH -X main.built=$BUILD_TIME -X main.goversion=$GOLANG_VERSION"
 
 echo "Complete!"

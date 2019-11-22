@@ -1,5 +1,5 @@
 package cli
 
 var (
-	Semver, Commit, Built string
+	Semver, Commit, Built, GoVersion string
 )

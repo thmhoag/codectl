@@ -11,6 +11,7 @@ require (
 	github.com/gobuffalo/packd v0.3.0
 	github.com/gobuffalo/packr/v2 v2.5.2
 	github.com/hashicorp/go-getter v1.3.0
+	github.com/huandu/xstrings v1.2.1 // indirect
 	github.com/imdario/mergo v0.3.8 // indirect
 	github.com/manifoldco/promptui v0.3.2
 	github.com/mitchellh/go-homedir v1.1.0

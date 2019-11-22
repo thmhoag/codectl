@@ -7,7 +7,7 @@ import (
 )
 
 var (
-	semver, commit, built string
+	semver, commit, built, goversion string
 )
 
 func main() {
@@ -15,6 +15,7 @@ func main() {
 	cli.Semver = semver
 	cli.Commit = commit
 	cli.Built = built
+	cli.GoVersion = goversion
 
 	if err := cli.Execute(); err != nil {
 		os.Exit(1)

@@ -27,18 +27,19 @@ func Execute() error {
 	repoCacheDir := fmt.Sprintf("%s/repository", getConfigDirPath(name))
 
 	ctx := &globalCtx{
-		log: *logrus.NewEntry(logger),
-		config: cfg,
+		log:        *logrus.NewEntry(logger),
+		config:     cfg,
 		workingDir: getWorkingDir(),
 		version: version.Properties{
-			Semver: Semver,
-			Commit: Commit,
-			Built:  Built,
+			Semver:    Semver,
+			Commit:    Commit,
+			Built:     Built,
+			GoVersion: GoVersion,
 		},
 		repman: repomanager.NewManager(&repomanager.ManagerOpts{
 			CacheDir: repoCacheDir,
 			PropName: "repositories",
-			Config: &cfg,
+			Config:   &cfg,
 		}),
 		generator: generator.LoadFromPath(repoCacheDir),
 	}

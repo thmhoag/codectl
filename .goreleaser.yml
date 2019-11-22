@@ -2,6 +2,7 @@ project_name: codectl
 env:
   - GO111MODULE=on
   - CGO_ENABLED=0
+  - GOVERSION=
 before:
   hooks:
     - go mod download
@@ -9,7 +10,7 @@ builds:
   - main: cmd/codectl/main.go
     binary: codectl
     ldflags:
-      - -s -w -X main.semver=v{{.Version}} -X main.commit={{.Commit}} -X main.built={{.Date}}
+      - -s -w -X main.semver=v{{.Version}} -X main.commit={{.Commit}} -X main.built={{.Date}} -X main.goversion={{.Env.GOLANG_VERSION}}
     goos:
       - darwin
       - windows
