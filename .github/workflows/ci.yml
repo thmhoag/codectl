@@ -1,0 +1,27 @@
+name: ci
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Set up Go
+        uses: actions/setup-go@v1
+        with:
+          version: v1.12.13
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v1
+        with:
+          version: v0.118.0
+          args: release --rm-dist --skip-validate --skip-publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
