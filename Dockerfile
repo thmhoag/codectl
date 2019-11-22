@@ -3,7 +3,7 @@
 FROM goreleaser/goreleaser as goreleaser
 
 # Move to golang 1.12.7 to ensure we're on the desired version
-FROM golang:1.12.7-alpine as build-sdk
+FROM golang:1.12.13-alpine as build-sdk
 
 RUN apk add --no-cache \
     bash \
