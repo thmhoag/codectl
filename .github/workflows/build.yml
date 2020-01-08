@@ -1,0 +1,39 @@
+name: build
+
+env:
+  GOLANG_VERSION: 1.12.13
+
+on:
+  pull_request:
+    branches:
+      - master
+  push:
+    branches:
+      - master
+    tags:
+      - "v*.*.*"
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Initialize release command args
+        if: "!contains(github.ref, 'tag')"
+        shell: bash
+        run: echo "::set-env name=RELEASE_CMD_ARGS::--skip-validate --skip-publish"
+      - name: Display release command args
+        shell: bash
+        run: echo "RELEASE_CMD_ARGS = $RELEASE_CMD_ARGS"
+      - name: Checkout
+        uses: actions/checkout@v1
+      - name: Set up Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ env.GOLANG_VERSION }}
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v1
+        with:
+          version: v0.118.0
+          args: release --rm-dist ${{ env.RELEASE_CMD_ARGS}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
