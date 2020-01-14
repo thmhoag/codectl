@@ -1,7 +1,9 @@
 package root
 
 import (
+	nested "github.com/antonfisher/nested-logrus-formatter"
 	"github.com/sirupsen/logrus"
+	"github.com/thmhoag/codectl/pkg/clog"
 )
 
 var (
@@ -14,4 +16,24 @@ var (
 		"debug":   logrus.DebugLevel,
 		"trace":   logrus.TraceLevel,
 	}
+
+	logFormatterLookup = map[string]logrus.Formatter{
+		"clean": getCleanLogFormatter(),
+		"detailed": getDetailedLogFormatter(),
+	}
 )
+
+func getCleanLogFormatter() logrus.Formatter {
+	return &clog.Formatter{
+		UseColors:     true,
+		ShowFullLevel: true,
+		TrimMessages:  true,
+	}
+}
+
+func getDetailedLogFormatter() logrus.Formatter {
+	return &nested.Formatter{
+		HideKeys:    true,
+		FieldsOrder: []string{"cmd", "calledAs", "args", "flags"},
+	}
+}

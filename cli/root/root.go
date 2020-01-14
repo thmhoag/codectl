@@ -6,12 +6,12 @@ import (
 	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 	"strings"
-	nested "github.com/antonfisher/nested-logrus-formatter"
 )
 
 type rootOpts struct {
-	loglevel    string
-	showVersion bool
+	loglevel     string
+	logFormatter string
+	showVersion  bool
 }
 
 func NewRootCmd(ctx Ctx) *cobra.Command {
@@ -36,28 +36,29 @@ func NewRootCmd(ctx Ctx) *cobra.Command {
 	cmd.SetVersionTemplate("{{.Version}}\n")
 	cmd.Flags().BoolVarP(&opts.showVersion, "version", "v", false, "return the version of the executable")
 	cmd.PersistentFlags().StringVar(&opts.loglevel, "loglevel", "warning", "logrus log level [panic, fatal, error, warning, info, debug, trace]")
+	cmd.PersistentFlags().StringVar(&opts.logFormatter, "logformatter", "clean", "log formatter [clean, detailed]")
 	cfg.BindPFlags(cmd.PersistentFlags())
 
 	return cmd
 }
 
-func setupLogger(cmd *cobra.Command, config *viper.Viper) func (*logrus.Logger) *logrus.Logger {
-	return func (log *logrus.Logger) *logrus.Logger {
+func setupLogger(cmd *cobra.Command, config *viper.Viper) func(*logrus.Logger) *logrus.Logger {
+	return func(log *logrus.Logger) *logrus.Logger {
 		log.SetOutput(cmd.OutOrStderr())
-		log.SetFormatter(&nested.Formatter{
-			HideKeys:    true,
-			FieldsOrder: []string{"cmd", "calledAs", "args", "flags"},
-		})
+
+		if formatter, ok := logFormatterLookup[strings.ToLower(config.GetString("logformatter"))]; ok {
+			log.SetFormatter(formatter)
+		}
+
 		if level, ok := logLevelLookup[strings.ToLower(config.GetString("loglevel"))]; ok {
 			log.SetLevel(level)
-			log.Tracef("log level set to %s", level)
 		}
 
 		return log
 	}
 }
 
-func setupTelemetry(ctx Ctx, cmd *cobra.Command) func (*logrus.Entry) *logrus.Entry {
+func setupTelemetry(ctx Ctx, cmd *cobra.Command) func(*logrus.Entry) *logrus.Entry {
 
 	logflags := make(map[string]string)
 	cmd.Flags().VisitAll(func(f *pflag.Flag) {
@@ -74,3 +75,5 @@ func setupTelemetry(ctx Ctx, cmd *cobra.Command) func (*logrus.Entry) *logrus.En
 		})
 	}
 }
+
+
