@@ -46,6 +46,11 @@ func (f *Formatter) Format(entry *logrus.Entry) ([]byte, error) {
 		msg = strings.TrimSpace(msg)
 	}
 
+	logErr, ok := entry.Data["error"].(error)
+	if ok {
+		msg = fmt.Sprintf("%s (%s)", msg, logErr.Error())
+	}
+
 	b.WriteString(msg)
 	b.WriteByte('\n')
 	return b.Bytes(), nil
