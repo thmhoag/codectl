@@ -8,6 +8,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -41,6 +42,10 @@ func GetAll(box *packr.Box, dir string) (map[string]*Properties, error) {
 		if props.Name == "" {
 			props.Name = strings.ReplaceAll(filepath.Dir(fileInfo.Name()), "/", ".")
 			props.Name = strings.ReplaceAll(props.Name, `\`, ".")
+		}
+
+		if props.Overrides.Paths != nil {
+			props.Overrides.Paths = prepOverridePaths(props.Overrides.Paths)
 		}
 
 		templates[props.Name] = props
@@ -77,4 +82,24 @@ func unmarshalProperties(file packd.File) (*Properties, error) {
 	}
 
 	return props, nil
+}
+
+func prepOverridePaths(overrides map[string]string) map[string]string {
+	newPaths := make(map[string]string)
+
+	for k, v := range overrides {
+		newKey := k
+
+		if !strings.HasPrefix(newKey, "/") {
+			newKey = "/" + newKey
+		}
+
+		if runtime.GOOS == "windows" {
+			newKey = strings.ReplaceAll(newKey, "/", `\`)
+		}
+
+		newPaths[newKey] = v
+	}
+
+	return newPaths
 }
