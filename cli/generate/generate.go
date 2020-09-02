@@ -78,7 +78,7 @@ func NewGenerateCmd(ctx Ctx) *cobra.Command {
 				}
 			}
 
-			if err := gen.Generate(parameterValues); err != nil {
+			if err := gen.Generate(parameterValues, &templateProps.Overrides); err != nil {
 				log.WithError(err).Fatal("error processing template")
 			}
 		},

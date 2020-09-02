@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"text/template"
 
@@ -51,7 +52,7 @@ type Generator interface {
 
 	// Generate processes the template and override files and generates the result
 	// to the defined destination path.
-	Generate(interface{}) error
+	Generate(interface{}, *tmpl.Overrides) error
 }
 
 type generator struct {
@@ -90,7 +91,7 @@ func (g *generator) CleanDestination(clean bool) Generator {
 	return g
 }
 
-func (g *generator) Generate(parmsObject interface{}) error {
+func (g *generator) Generate(parmsObject interface{}, overrides *tmpl.Overrides) error {
 	if err := g.validate(); err != nil {
 		return err
 	}
@@ -105,30 +106,22 @@ func (g *generator) Generate(parmsObject interface{}) error {
 			return err
 		}
 
-		if strings.ToLower(filepath.Base(i.Name())) == strings.ToLower(tmpl.DefinitionFileName) {
+		newFileName, err := processPath(g, i.Name(), parmsObject, overrides)
+		if err != nil {
+			return err
+		}
+
+		if strings.ToLower(filepath.Base(newFileName)) == strings.ToLower(tmpl.DefinitionFileName) {
 			// this is the definition file, don't copy it
 			return nil
 		}
 
-		newFileName := strings.Replace(i.Name(), g.pathPrefix, "", 1)
 		isTemplateFile := filepath.Ext(i.Name()) == ".tpl"
 		if isTemplateFile {
 			newFileName = strings.TrimSuffix(newFileName, ".tpl")
 		} else if filepath.Ext(i.Name()) == ".nogen" {
 			newFileName = strings.TrimSuffix(newFileName, ".nogen")
 		}
-
-		tmpl, err := template.New("").Funcs(sprig.TxtFuncMap()).Funcs(createFuncMap()).Parse(newFileName)
-		if err != nil {
-			return err
-		}
-
-		buf := &bytes.Buffer{}
-		if err := tmpl.Execute(buf, parmsObject); err != nil {
-			return err
-		}
-
-		newFileName = buf.String()
 
 		newFilePath := filepath.Join(g.destinationPath, newFileName)
 
@@ -209,6 +202,29 @@ func cleanDestination(g *generator) error {
 	return nil
 }
 
+func processPath(g *generator, fileName string, parmsObject interface{}, overrides *tmpl.Overrides) (string, error) {
+	newFileName := strings.Replace(fileName, g.pathPrefix, "", 1)
+	newFileName = applyOverrides(newFileName, overrides)
+
+	tmpl, err := template.New("").Funcs(sprig.TxtFuncMap()).Funcs(createFuncMap()).Parse(newFileName)
+	if err != nil {
+		return "", err
+	}
+
+	buf := &bytes.Buffer{}
+	if err := tmpl.Execute(buf, parmsObject); err != nil {
+		return "", err
+	}
+
+	newFileName = buf.String()
+
+	if runtime.GOOS == "windows" {
+		newFileName = strings.ReplaceAll(newFileName, "/", `\`)
+	}
+
+	return newFileName, nil
+}
+
 func createFuncMap() template.FuncMap {
 	return template.FuncMap{
 		"toYaml": toYaml,
@@ -262,4 +278,14 @@ func fileCopy(src, dst string) error {
 	defer destination.Close()
 	_, err = io.Copy(destination, source)
 	return err
+}
+
+func applyOverrides(path string, overrides *tmpl.Overrides) string {
+	for key, val := range overrides.Paths {
+		if strings.HasPrefix(path, key) {
+			path = strings.Replace(path, key, val, 1)
+		}
+	}
+
+	return path
 }
