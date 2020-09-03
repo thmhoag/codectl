@@ -7,7 +7,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"text/template"
 
@@ -217,10 +216,6 @@ func processPath(g *generator, fileName string, parmsObject interface{}, overrid
 	}
 
 	newFileName = buf.String()
-
-	if runtime.GOOS == "windows" {
-		newFileName = strings.ReplaceAll(newFileName, "/", `\`)
-	}
 
 	return newFileName, nil
 }
