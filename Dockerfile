@@ -2,8 +2,8 @@
 # and binary
 FROM goreleaser/goreleaser as goreleaser
 
-# Move to golang 1.12.7 to ensure we're on the desired version
-FROM golang:1.12.13-alpine as build-sdk
+# Move to golang to ensure we're on the desired version
+FROM golang:1.20.5-alpine as build-sdk
 
 RUN apk add --no-cache \
     bash \
@@ -11,7 +11,7 @@ RUN apk add --no-cache \
     git
 
 COPY --from=goreleaser /entrypoint.sh /entrypoint.sh
-COPY --from=goreleaser /bin/goreleaser /bin/goreleaser
+COPY --from=goreleaser /usr/bin/goreleaser /usr/bin/goreleaser
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD [ "-h" ]
