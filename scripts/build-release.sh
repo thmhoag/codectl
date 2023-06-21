@@ -18,4 +18,4 @@ docker run --rm --privileged \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -w $PWD \
   -e GITHUB_TOKEN="$GITHUB_TOKEN" \
-  goreleaser-build-sdk release --rm-dist "$@"
+  goreleaser-build-sdk release --clean "$@"
